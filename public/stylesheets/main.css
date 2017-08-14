@@ -1,0 +1,24 @@
+.sidebar {
+  padding-left: 0;
+  padding-right: 0;
+  background-color: #4C5457;
+  color: #868e96;
+}
+
+.sidebar .nav {
+  padding-bottom: 2rem;
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar .active {
+  color: #f9fafa;
+}
+
+.sidebar .category {
+  color: #b3a5b4;
+  background-color: #20222d;
+  padding-left: 1rem;
+}
