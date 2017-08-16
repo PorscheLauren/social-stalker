@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoClient = require('mongodb').MongoClient;
-const dbUrl = 'mongodb://localhost:27017/social-watcher';
+const dbUrl = 'mongodb://localhost:27017/social-stalker';
 const path = require('path');
 const vkModule = require(path.resolve(__dirname, 'modules/vk.js'));
 let usersCollection;
