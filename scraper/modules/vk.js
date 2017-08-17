@@ -27,10 +27,13 @@ function fetchUsers(callback) {
                     first_name: element.first_name,
                     last_name: element.last_name,
                     online: element.online == 1 ? true : false,
-                    last_seen: element.last_seen ? element.last_seen.time : undefined,
+                    last_seen:
+                        element.last_seen ? element.last_seen.time : undefined,
                     source: 'vk'});
            });
            callback(users);
+        }).catch((error) => {
+            console.log('[' + new Date() + '] '+ error);
         });
 }
 

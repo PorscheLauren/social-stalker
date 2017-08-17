@@ -31,6 +31,9 @@ function handleUser(user) {
         },
         {upsert: true},
         function(err, r) {
+            if (err) {
+                console.log('[' + new Date() + '] '+ err);
+            }
         }
     );
 }
