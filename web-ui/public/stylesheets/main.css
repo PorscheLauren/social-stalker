@@ -26,3 +26,7 @@
   background-color: #20222d;
   padding: 0.5rem 1rem;
 }
+
+.user-secondary-info {
+  display: inline-block;
+}
