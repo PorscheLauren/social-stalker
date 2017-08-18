@@ -57,6 +57,80 @@
             <div class="p-2">
                 <h5 class="user-secondary-info">Vk</h5>
             </div>
+
+            <div class="p-1 ct-chart"></div>
         </div>
     </div>
 </div>
+
+<script>
+(function() {
+    let last_seen = [
+        1502905151,
+        1502910546,
+        1502911446,
+        1502911620,
+        1502912710,
+        1502912740,
+        1502912931,
+        1502913252,
+        1502920103,
+        1502922260,
+        1502922316,
+        1502922316,
+        1502922316,
+        1502933606,
+        1502933790,
+        1502933965,
+        1502934141,
+        1502934620,
+        1502934620];
+
+    let data = new Set();
+    last_seen.forEach(function(element) {
+        data.add({x: element, y: 1});
+    });
+
+    let startDate = moment().subtract(1, 'days').startOf('day').unix();
+    let endDate = moment().endOf('day').add().unix();
+    let datesBetween = [];
+    for (let i = startDate; i < endDate; i = moment.unix(i).add(3, 'hours').unix()) {
+        datesBetween.push(i);
+    }
+    datesBetween.push(endDate);
+
+    chart = new Chartist.Bar('.ct-chart', {
+    series: [
+                {
+                    name: 'online',
+                    data:  Array.from(data)
+                }
+            ]
+    }, {
+    lineSmooth: false,
+    axisX: {
+        type: Chartist.FixedScaleAxis,
+        labelInterpolationFnc: function (value) {
+            return moment.unix(value).format('DD.MM HH:mm');
+        },
+        low: startDate,
+        high: endDate,
+        ticks: datesBetween
+    },
+    axisY: {
+        onlyInteger: true,
+        labelInterpolationFnc: function (value) {
+            return value === 1 ? 'Online' : 'Offline';
+        }
+    },
+    plugins: [
+    Chartist.plugins.tooltip({
+        transformTooltipTextFnc: function(chartData) {
+            let time = chartData.split(',')[0];
+            return moment.unix(time).format('DD.MM HH:mm');
+        }
+    })
+    ]
+});
+})()
+</script>

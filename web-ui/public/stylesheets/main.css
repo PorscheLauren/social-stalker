@@ -30,3 +30,23 @@
 .user-secondary-info {
   display: inline-block;
 }
+
+.chartist-tooltip {
+  background-color: #4c5457;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.chartist-tooltip:before {
+  border-top-color: #4c5457;
+}
+
+.ct-series-a .ct-bar {
+  stroke: #de6060;
+}
+
+.ct-chart .ct-label.ct-horizontal {
+  display: inline-block;
+  -ms-transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}

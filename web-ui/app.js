@@ -34,6 +34,16 @@ app.use('/scripts', express.static(
   path.join(__dirname, 'node_modules', 'jquery', 'dist')));
 app.use('/scripts', express.static(
   path.join(__dirname, 'node_modules', 'popper.js', 'dist')));
+app.use('/stylesheets', express.static(
+  path.join(__dirname, 'node_modules', 'chartist', 'dist')));
+app.use('/scripts', express.static(
+  path.join(__dirname, 'node_modules', 'chartist', 'dist')));
+app.use('/stylesheets', express.static(
+  path.join(__dirname, 'node_modules', 'chartist-plugin-tooltips', 'dist')));
+app.use('/scripts', express.static(
+  path.join(__dirname, 'node_modules', 'chartist-plugin-tooltips', 'dist')));
+app.use('/scripts', express.static(
+  path.join(__dirname, 'node_modules', 'moment')));
 
 app.use('/', index);
 app.use('/index', index);
