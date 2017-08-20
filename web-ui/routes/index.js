@@ -1,8 +1,8 @@
 const express = require('express');
+const userController = require('../controllers/user');
 const router = new express.Router();
 
-router.get('/', function(req, res, next) {
-  res.render('index', {title: 'Social stalker'});
-});
+router.get('/', userController.listUsers);
+router.get('/user/:id', userController.getUserInfo);
 
 module.exports = router;
