@@ -44,6 +44,10 @@ app.use('/scripts', express.static(
     path.join(__dirname, 'node_modules', 'chartist-plugin-tooltips', 'dist')));
 app.use('/scripts', express.static(
     path.join(__dirname, 'node_modules', 'moment')));
+app.use('/stylesheets', express.static(
+    path.join(__dirname, 'node_modules', 'open-iconic', 'font', 'css')));
+app.use('/fonts', express.static(
+    path.join(__dirname, 'node_modules', 'open-iconic', 'font', 'fonts')));
 
 app.use('/', index);
 app.use('/index', index);
