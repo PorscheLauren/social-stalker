@@ -1,0 +1,156 @@
+<div class="m-2">
+    <h3 class="user-additional-info">{{user.first_name}} {{user.last_name}}</h3>
+    <span class="user-additional-info user-status ml-3">
+        {{#if user.online}}
+        Online
+        {{else}}
+        Offline
+        {{/if}}
+    </span>
+</div>
+<div class="timeline">
+    <div class="m-2 ct-chart">
+        <div class="timeline-controls left">
+            <a id="timeline-left" href="#previous-day"><span class="oi oi-chevron-left"></span></a>
+        </div>
+        <div class="timeline-controls right">
+            <a id="timeline-right" href="#next-day"><span class="oi oi-chevron-right"></span></a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    let baseDate = moment().unix();
+    let chart;
+
+    $(document).ready(function() {
+        $('#timeline-left').click(function() {
+            baseDate = moment.unix(baseDate).subtract(1,
+                'days').unix();
+            updateChart();
+        });
+
+        $('#timeline-right').click(function() {
+            baseDate = moment.unix(baseDate).add(1,
+                'days').unix();
+            updateChart();
+        });
+
+        createChart();
+    });
+
+    /**
+     * Returns the first date that can be displayed on chart.
+     * @return {number} unix timestamp
+     **/
+    function getStartDate() {
+        return moment.unix(baseDate).subtract(1, 'days').startOf('day').unix();
+    }
+
+    /**
+     * Returns the last date that can be displayed on chart.
+     * @return {number} unix timestamp
+     **/
+    function getEndDate() {
+        return moment.unix(baseDate).endOf('day').add(1, 'seconds').unix();
+    }
+
+    /**
+     * Returns data for creating chart. Each element has 'x' and 'y' properties.
+     * @return {Set} chart's data
+     **/
+    function getChartData() {
+        let lastSeen = [{{user.last_seen}}];
+        let set = new Set();
+
+        lastSeen.forEach(function(element) {
+            if (element >= getStartDate() && element <= getEndDate()) {
+                set.add({
+                    x: element,
+                    y: 1,
+                });
+            }
+        });
+
+        return set;
+    }
+
+    /**
+     * Returns chart's ticks, for creating chart.
+     * @return {Array} chart's ticks
+     **/
+    function getChartTicks() {
+        let datesBetween = [];
+
+        for (let i = getStartDate(); i <= getEndDate(); i = moment.unix(i).add(
+                3,
+                'hours').unix()) {
+            datesBetween.push(i);
+        }
+
+        return datesBetween;
+    }
+
+    /**
+     * Creates a new chart.
+     **/
+    function createChart() {
+        chart = new Chartist.Bar('.ct-chart', {
+            series: [{
+                data: Array.from(getChartData()),
+            }],
+        }, {
+            axisX: {
+                type: Chartist.FixedScaleAxis,
+                high: getEndDate(),
+                low: getStartDate(),
+                ticks: getChartTicks(),
+                labelOffset: {
+                    x: -50,
+                    y: 0,
+                },
+                labelInterpolationFnc: function(value) {
+                    return moment.unix(value).format(
+                        'DD.MM HH:mm');
+                },
+            },
+            axisY: {
+                onlyInteger: true,
+                labelInterpolationFnc: function(value) {
+                    return value === 1 ? 'Online' :
+                        'Offline';
+                },
+            },
+            plugins: [
+                Chartist.plugins.tooltip({
+                    transformTooltipTextFnc: function(
+                        chartData) {
+                        let time = chartData.split(
+                            ',')[0];
+                        return moment.unix(time).format(
+                            'DD.MM HH:mm');
+                    },
+                }),
+            ],
+        });
+    }
+
+    /**
+     * Updates existing chart with new data and ticks.
+     **/
+    function updateChart() {
+        chart.update({
+            series: [{
+                data: Array.from(getChartData()),
+            }],
+        }, {
+            axisX: {
+                high: getEndDate(),
+                low: getStartDate(),
+                ticks: getChartTicks(),
+            },
+        }, true);
+    }
+})();
+</script>

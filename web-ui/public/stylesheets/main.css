@@ -1,52 +1,91 @@
 .sidebar {
-  padding-left: 0;
-  padding-right: 0;
-  background-color: #4C5457;
-  color: #868e96;
-}
-
-.sidebar .nav {
-  padding-bottom: 2rem;
+    padding-left: 0;
+    padding-right: 0;
+    background-color: #4C5457;
+    color: #868e96;
 }
 
 .sidebar .nav-link {
-  color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .sidebar .nav-link:hover {
-  color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.75);
 }
 
 .sidebar .active {
-  color: #f9fafa;
+    color: #f9fafa;
 }
 
 .sidebar .category {
-  color: #b3a5b4;
-  background-color: #20222d;
-  padding: 0.5rem 1rem;
+    background-color: #20222d;
+    padding: 0.5rem 1rem;
 }
 
-.user-secondary-info {
-  display: inline-block;
+.sidebar .category a {
+    display: block;
+    color: #b3a5b4bf;
+}
+
+.sidebar .category a:hover {
+    color: #b3a5b4;
+    text-decoration: none;
+}
+
+.sidebar .category h5 {
+    display: inline-block;
+}
+
+.sidebar .category .oi {
+    float: right;
+}
+
+.user-additional-info {
+    display: inline-block;
 }
 
 .chartist-tooltip {
-  background-color: #4c5457;
-  color: rgba(255, 255, 255, 0.75);
+    background-color: #4c5457;
+    color: rgba(255, 255, 255, 0.75);
 }
 
 .chartist-tooltip:before {
-  border-top-color: #4c5457;
+    border-top-color: #4c5457;
 }
 
 .ct-series-a .ct-bar {
-  stroke: #de6060;
+    stroke: #de6060;
 }
 
 .ct-chart .ct-label.ct-horizontal {
-  display: inline-block;
-  -ms-transform: translateX(-50%);
-  -webkit-transform: translateX(-50%);
-  transform: translateX(-50%);
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.timeline {
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-controls {
+    position: absolute;
+    height: 100%;
+}
+
+.timeline-controls a {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.timeline-controls a:hover {
+    color: rgba(0, 0, 0, 0.75);
+    text-decoration: none;
+}
+
+.timeline-controls.right {
+    right: 0;
+}
+
+.timeline-controls .oi {
+    font-size: 1.5rem;
+    top: 35%;
 }

@@ -1,4 +1,4 @@
-{{> layout page="index"}}
+{{> layout page="index" title="Social stalker"}}
 <div class="container-fluid">
     <div class="row">
         <div class="sidebar col-sm-3 col-lg-2">
@@ -8,129 +8,83 @@
             </form>
             <ul class="nav flex-column">
                 <li class="nav-item category">
-                  <h5>Vk</h5>
+                    <a data-toggle="collapse" href="#vk" aria-expanded="false" aria-controls="vk">
+                        <h5>Vk</h5>
+                        <span class="oi oi-chevron-bottom"></span>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Current user</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">User 2</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">User 3</a>
-                </li>
+                <div class="collapse" id="vk">
+                    {{#each vkUsers}}
+                    <li class="nav-item">
+                        <a class="user-link nav-link" data-id="{{this._id}}" href="#user">{{this.first_name}} {{this.last_name}}</a>
+                    </li>
+                    {{else}}
+                    <p class="text-warning">No users could be found</p>
+                    {{/each}}
+                </div>
             </ul>
             <ul class="nav flex-column">
                 <li class="nav-item category">
-                  <h5>Telegram</h5>
+                    <a data-toggle="collapse" href="#telegram" aria-expanded="false" aria-controls="telegram">
+                        <h5>Telegram</h5>
+                        <span class="oi oi-chevron-bottom"></span>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">User 4</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">User 5</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">User 6</a>
-                </li>
+                <div class="collapse" id="telegram">
+                    {{#each tgUsers}}
+                    <li class="nav-item">
+                        <a class="user-link nav-link" data-id="{{this._id}}" href="#user">{{this.first_name}} {{this.last_name}}</a>
+                    </li>
+                    {{else}}
+                    <p class="text-warning">No users could be found</p>
+                    {{/each}}
+                </div>
             </ul>
             <ul class="nav flex-column">
                 <li class="nav-item category">
-                  <h5>Facebook</h5>
+                    <a data-toggle="collapse" href="#facebook" aria-expanded="false" aria-controls="facebook">
+                        <h5>Facebook</h5>
+                        <span class="oi oi-chevron-bottom"></span>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">User 7</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">User 8</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">User 9</a>
-                </li>
+                <div class="collapse" id="facebook">
+                    {{#each fbUsers}}
+                    <li class="nav-item">
+                        <a class="user-link nav-link" data-id="{{this._id}}" href="#user">{{this.first_name}} {{this.last_name}}</a>
+                    </li>
+                    {{else}}
+                    <p class="text-warning">No users could be found</p>
+                    {{/each}}
+                </div>
             </ul>
         </div>
         <div class="col-sm-9 col-lg-10 bg-light">
-            <div class="p-2">
-                <h3 class="user-secondary-info">Firstname Lastname</h3>
-                <span class="user-secondary-info user-status ml-3">Offline</span>
-            </div>
-            <div class="p-2">
-                <h5 class="user-secondary-info">Vk</h5>
-            </div>
-
-            <div class="p-1 ct-chart"></div>
+            <div class="user-info"></div>
         </div>
     </div>
 </div>
 
 <script>
 (function() {
-    let last_seen = [
-        1502905151,
-        1502910546,
-        1502911446,
-        1502911620,
-        1502912710,
-        1502912740,
-        1502912931,
-        1502913252,
-        1502920103,
-        1502922260,
-        1502922316,
-        1502922316,
-        1502922316,
-        1502933606,
-        1502933790,
-        1502933965,
-        1502934141,
-        1502934620,
-        1502934620];
+    let previousLink;
+    $(document).ready(function() {
+        $('.user-link').click(function() {
+            $('.user-info').empty();
+            if (previousLink) {
+                $(previousLink).removeClass('active');
+            }
 
-    let data = new Set();
-    last_seen.forEach(function(element) {
-        data.add({x: element, y: 1});
+            let link = $(this);
+            link.addClass('active');
+            previousLink = link;
+
+            $.ajax({
+                url: '/user/' + link.data('id'),
+                success: function(data) {
+                    $('.user-info').html(data);
+                },
+            });
+        });
     });
-
-    let startDate = moment().subtract(1, 'days').startOf('day').unix();
-    let endDate = moment().endOf('day').add().unix();
-    let datesBetween = [];
-    for (let i = startDate; i < endDate; i = moment.unix(i).add(3, 'hours').unix()) {
-        datesBetween.push(i);
-    }
-    datesBetween.push(endDate);
-
-    chart = new Chartist.Bar('.ct-chart', {
-    series: [
-                {
-                    name: 'online',
-                    data:  Array.from(data)
-                }
-            ]
-    }, {
-    lineSmooth: false,
-    axisX: {
-        type: Chartist.FixedScaleAxis,
-        labelInterpolationFnc: function (value) {
-            return moment.unix(value).format('DD.MM HH:mm');
-        },
-        low: startDate,
-        high: endDate,
-        ticks: datesBetween
-    },
-    axisY: {
-        onlyInteger: true,
-        labelInterpolationFnc: function (value) {
-            return value === 1 ? 'Online' : 'Offline';
-        }
-    },
-    plugins: [
-    Chartist.plugins.tooltip({
-        transformTooltipTextFnc: function(chartData) {
-            let time = chartData.split(',')[0];
-            return moment.unix(time).format('DD.MM HH:mm');
-        }
-    })
-    ]
-});
-})()
+})();
 </script>
