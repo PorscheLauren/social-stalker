@@ -2,9 +2,20 @@
 
 const mongojs = require('mongojs');
 let db = mongojs('mongodb://localhost:27017/social-stalker', ['users']);
+db.users.createIndex({
+    first_name: 'text',
+    last_name: 'text',
+});
 
 exports.listUsers = function(req, res, next) {
-    db.users.find().sort({
+    let query = {};
+
+    if (req.query.name) {
+        let nameRegex = new RegExp( '.*' + req.query.name + '.*', 'i');
+        query.$or = [{'first_name': nameRegex}, {'last_name': nameRegex}];
+    }
+
+    db.users.find(query).sort({
         first_name: 1,
         last_name: 1,
     }, function(err, users) {
