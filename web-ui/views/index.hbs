@@ -59,7 +59,11 @@
             </ul>
         </div>
         <div class="col-sm-9 col-lg-10 bg-light">
-            <div class="user-info"></div>
+            <div class="user-info sticky-top">
+            </div>
+            <div class="user-info-placeholder sticky-top d-flex justify-content-center align-items-center">
+                    <h4 class="text-secondary">Please select a user</h4>
+            </div>
         </div>
     </div>
 </div>
@@ -70,6 +74,7 @@
     $(document).ready(function() {
         $('.user-link').click(function() {
             $('.user-info').empty();
+            $('.user-info-placeholder').empty();
             if (previousLink) {
                 $(previousLink).removeClass('active');
             }
