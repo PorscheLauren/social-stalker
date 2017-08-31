@@ -1,0 +1,12 @@
+.sidebar .btn-dark {
+    color: #b3a5b4bf;
+}
+
+.sidebar .btn-dark:hover {
+    background-color: #20222d;
+    color: #b3a5b4;
+}
+
+.hidden {
+    display: none;
+}
