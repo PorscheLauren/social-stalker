@@ -14,7 +14,9 @@ exports.listSources = function(req, res, next) {
             map.set(element.name, element);
         });
 
-        res.render('settings', {sources: map});
+        res.render('settings', {
+            sources: map,
+        });
     });
 };
 
