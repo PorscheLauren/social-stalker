@@ -1,26 +1,32 @@
 'use strict';
 
-const mongoClient = require('mongodb').MongoClient;
-const dbUrl = 'mongodb://localhost:27017/social-stalker';
+const mongojs = require('mongojs');
+let db = mongojs('mongodb://localhost:27017/social-stalker', ['users', 'usersources']);
 const path = require('path');
-const vkModule = require(path.resolve(__dirname, 'modules/vk.js'));
-let usersCollection;
+const VK = require(path.resolve(__dirname, 'modules/vk.js'));
+let vkModule;
 
 /**
- * 
+ * Initialize modules and database.
  */
-function initCollection() {
-    mongoClient.connect(dbUrl, function(err, db) {
-        usersCollection = db.collection('users');
+function init() {
+    db.usersources.createIndex({name: 1}, {unique: true});
+    vkModule = new VK();
+    db.usersources.insert({name: VK.NAME}, function(error, res) {
+        if (error) {
+            handleError(error);
+            return;
+        }
     });
 }
 
 /**
- * 
- * @param {*} user 
+ * Handle user object by recording information about it.
+ *
+ * @param {object} user user object
  */
 function handleUser(user) {
-    usersCollection.updateOne({
+    db.users.update({
         first_name: user.first_name,
         last_name: user.last_name,
         internal_id: user.id,
@@ -32,18 +38,60 @@ function handleUser(user) {
         {upsert: true},
         function(err, r) {
             if (err) {
-                console.log('[' + new Date() + '] '+ err);
+                handleError(err);
+                return;
             }
         }
     );
 }
 
-initCollection();
+/**
+ * Update modules' settings.
+ *
+ * @return {Promise} result of update
+ */
+function update() {
+    return new Promise((resolve, reject) => {
+        db.usersources.findOne({name: VK.NAME}, function(err, res) {
+            if (err) {
+                reject(err);
+            }
 
-setInterval(function() {
-    vkModule.fetchUsers(function(result) {
-        result.forEach(function(element) {
-            handleUser(element);
+            if (res) {
+                let options = {
+                    appId: res.app_id,
+                    appSecureKey: res.app_secure_key,
+                    userToken: res.user_token,
+                };
+                vkModule.setOptions(options);
+            }
+            resolve();
         });
     });
+}
+
+/**
+ * Handle application errors.
+ *
+ * @param {object} error error instance representing
+ * the error during the execution
+ */
+function handleError(error) {
+    console.log('[' + new Date() + '] '+ error);
+}
+
+init();
+setInterval(function() {
+    update().then((res) => {
+        vkModule.fetchUsers(function(error, result) {
+            if (error) {
+                handleError(error);
+                return;
+            }
+
+            result.forEach(function(element) {
+                handleUser(element);
+            });
+        });
+    }).catch((error) => handleError(error));
 }, 3*60*1000);
