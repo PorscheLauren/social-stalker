@@ -1,4 +1,10 @@
 {{> layout page="index" title="Social stalker"}}
+
+{{#*inline "head-block"}}
+    <link rel="stylesheet" href="/stylesheets/index.css">
+{{/inline}}
+
+{{#*inline "body"}}
 <div class="container-fluid">
     <div class="row">
         <div class="sidebar col-sm-3 col-lg-2">
@@ -61,20 +67,22 @@
         <div class="col-sm-9 col-lg-10 bg-light">
             <div class="user-info sticky-top">
             </div>
-            <div class="user-info-placeholder sticky-top d-flex justify-content-center align-items-center">
+            <div class="placeholder sticky-top d-flex justify-content-center align-items-center">
                     <h4 class="text-secondary">Please select a user</h4>
             </div>
         </div>
     </div>
 </div>
+{{/inline}}
 
+{{#*inline "scripts-block"}}
 <script>
 (function() {
     let previousLink;
     $(document).ready(function() {
         $('.user-link').click(function() {
             $('.user-info').empty();
-            $('.user-info-placeholder').empty();
+            $('.placeholder').empty();
             if (previousLink) {
                 $(previousLink).removeClass('active');
             }
@@ -93,3 +101,4 @@
     });
 })();
 </script>
+{{/inline}}

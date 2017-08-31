@@ -1,1 +1,70 @@
 {{> layout page="settings"}}
+
+{{#*inline "head-block"}}
+    <link rel="stylesheet" href="/stylesheets/settings.css">
+{{/inline}}
+
+{{#*inline "body"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="sidebar col-sm-3 col-lg-2">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <button class="btn btn-dark btn-lg btn-block" data-name="vk">
+                        <h5>Vk</h5>
+                    </button>
+                </li>
+            </ul>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <button class="btn btn-dark btn-lg btn-block" data-name="telegram">
+                        <h5>Telegram</h5>
+                    </button>
+                </li>
+            </ul>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <button class="btn btn-dark btn-lg btn-block" data-name="facebook">
+                        <h5>Facebook</h5>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-lg-10 bg-light">
+            <div class="usersource sticky-top">
+            </div>
+            <div class="placeholder sticky-top d-flex justify-content-center align-items-center">
+                <h4 class="text-secondary">Please select a usersource to change its settings.</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{{/inline}}
+
+{{#*inline "scripts-block"}}
+<script>
+(function() {
+    let previousButton;
+    $(document).ready(function() {
+        $('.nav-item').click(function() {
+            $('.usersource').empty();
+            $('.placeholder').empty();
+            if (previousButton) {
+                $(previousButton).removeClass('active');
+            }
+
+            let button = $(this).children('button');
+            button.addClass('active');
+            previousButton = button;
+
+            $.ajax({
+                url: '/settings/source/' + button.data('name'),
+                success: function(data) {
+                    $('.usersource').html(data);
+                },
+            });
+        });
+    });
+})();
+</script>
+{{/inline}}

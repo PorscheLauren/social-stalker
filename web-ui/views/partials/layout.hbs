@@ -10,13 +10,16 @@
     <link rel='stylesheet' href='/stylesheets/chartist-plugin-tooltip.css' />
     <link rel='stylesheet' href='/stylesheets/open-iconic-bootstrap.css' />
     <link rel='stylesheet' href='/stylesheets/main.css' />
+    {{#> head-block}}
+    {{/head-block}}
 </head>
 
 <body>
 
     {{> navbar}}
 
-    {{{ body }}}
+    {{#> body}}
+    {{/body}}
 
     <script src="/scripts/jquery.js"></script>
     <script src="/scripts/popper.js"></script>
@@ -24,6 +27,8 @@
     <script src="/scripts/chartist.js"></script>
     <script src="/scripts/chartist-plugin-tooltip.js"></script>
     <script src="/scripts/moment.js"></script>
+    {{#> scripts-block}}
+    {{/scripts-block}}
 </body>
 
 </html>
