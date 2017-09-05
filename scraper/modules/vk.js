@@ -69,21 +69,23 @@ class VK {
      */
     fetchUsers() {
         return new Promise((resolve, reject) => {
-            this._vkApi.call(
-                'friends.get',
-                 {
-                   fields: 'last_seen',
-               }).then((res) => {
+            this._vkApi
+                .call('friends.get', {
+                    fields: 'last_seen',
+                })
+                .then((res) => {
                     let users = [];
                     res.items.forEach((element) => {
-                        users.push(
-                            {id: element.id,
+                        users.push({
+                            id: element.id,
                             first_name: element.first_name,
                             last_name: element.last_name,
                             online: element.online == 1 ? true : false,
-                            last_seen:
-                             element.last_seen ? element.last_seen.time : undefined,
-                            source: this.name});
+                            last_seen: element.last_seen
+                                ? element.last_seen.time
+                                : undefined,
+                            source: this.name,
+                        });
                     });
                     resolve(users);
                 })

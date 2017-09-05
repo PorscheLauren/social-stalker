@@ -1,7 +1,10 @@
 'use strict';
 
 const mongojs = require('mongojs');
-let db = mongojs('mongodb://localhost:27017/social-stalker', ['users', 'usersources']);
+let db = mongojs('mongodb://localhost:27017/social-stalker', [
+    'users',
+    'usersources',
+]);
 const path = require('path');
 const VK = require(path.resolve(__dirname, 'modules/vk.js'));
 const Facebook = require(path.resolve(__dirname, 'modules/facebook.js'));
@@ -32,11 +35,13 @@ function init() {
  * @param {object} user user object
  */
 function handleUser(user) {
-    db.users.update({
-        first_name: user.first_name,
-        last_name: user.last_name,
-        internal_id: user.id,
-        source: user.source},
+    db.users.update(
+        {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            internal_id: user.id,
+            source: user.source,
+        },
         {
             $push: {last_seen: user.last_seen},
             $set: {online: user.online},
@@ -65,7 +70,10 @@ function update() {
                 }
 
                 if (!res) {
-                    reject(`[${element.name}] Module ${element.name} couldn't be found`);
+                    reject(
+                        `[${element.name}] Module ${element.name} `
+                            + `couldn't be found`
+                    );
                 }
 
                 delete res._id;
@@ -111,17 +119,21 @@ function retry(fn, maxRetries = 3) {
 function fetch() {
     return new Promise((resolve, reject) => {
         modules.forEach(function(element) {
-            retry(element.fetchUsers.bind(element)).then((res) => {
-                res.forEach(function(user) {
-                    handleUser(user);
-                });
-                resolve();
-            }).catch((error) => reject(`[${element.name}] ${error}`));
+            retry(element.fetchUsers.bind(element))
+                .then((res) => {
+                    res.forEach(function(user) {
+                        handleUser(user);
+                    });
+                    resolve();
+                })
+                .catch((error) => reject(`[${element.name}] ${error}`));
         });
     });
 }
 
 init();
 setInterval(function() {
-    update().then(fetch).catch((error) => handleError(error));
-}, 3*60*1000);
+    update()
+        .then(fetch)
+        .catch((error) => handleError(error));
+}, 0.1 * 60 * 1000);
