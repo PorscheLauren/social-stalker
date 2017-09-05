@@ -93,6 +93,26 @@ class Facebook {
     }
 
     /**
+     * Update scraper with new options.
+     *
+     * @param {object} options new options, can contain userId,
+     * cookie and clientId.
+     */
+    update(options) {
+        if (options.userId) {
+            this.userId = options.userId;
+        }
+
+        if (options.cookie) {
+            this.cookie = options.cookie;
+        }
+
+        if (options.clientId) {
+            this.clientId = options.clientId;
+        }
+    }
+
+    /**
      * Get user's name from id.
      *
      * @param {*} id user's id
