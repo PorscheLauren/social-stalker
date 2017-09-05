@@ -42,7 +42,7 @@ class Facebook {
     /**
      * Return name of the scraper.
      */
-    static get NAME() {
+    get name() {
         return 'facebook';
     }
 
@@ -201,7 +201,7 @@ class Facebook {
                                                     last_name: person.lastName,
                                                     online: online,
                                                     last_seen: value.lat,
-                                                    source: Facebook.NAME,
+                                                    source: this.name,
                                                 };
                                                 resolve(user);
                                             })

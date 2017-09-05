@@ -29,7 +29,7 @@ class VK {
     /**
      * Return name of the scraper.
      */
-    static get NAME() {
+    get name() {
         return 'vk';
     }
 
