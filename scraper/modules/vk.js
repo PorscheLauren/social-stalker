@@ -34,18 +34,20 @@ class VK {
     }
 
     /**
-     * Set scraper's options.
+     * Update scraper with new options.
      *
-     * @param {object} options scraper's options, can contain appId,
+     * @param {object} options new options, can contain appId,
      * appSecureKey and userToken.
      */
-    setOptions(options = {}) {
+    update(options) {
         if (options.appId) {
             this._appId = options.appId;
         }
+
         if (options.appSecureKey) {
             this._appSecureKey = options.appSecureKey;
         }
+
         if (options.userToken) {
             this._userToken = options.userToken;
         }
