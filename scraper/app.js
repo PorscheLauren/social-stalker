@@ -4,19 +4,25 @@ const mongojs = require('mongojs');
 let db = mongojs('mongodb://localhost:27017/social-stalker', ['users', 'usersources']);
 const path = require('path');
 const VK = require(path.resolve(__dirname, 'modules/vk.js'));
-let vkModule;
+const Facebook = require(path.resolve(__dirname, 'modules/facebook.js'));
+let modules = [];
 
 /**
  * Initialize modules and database.
  */
 function init() {
     db.usersources.createIndex({name: 1}, {unique: true});
-    vkModule = new VK();
-    db.usersources.insert({name: VK.NAME}, function(error, res) {
-        if (error) {
-            handleError(error);
-            return;
-        }
+
+    modules.push(new VK());
+    modules.push(new Facebook('', '', ''));
+
+    modules.forEach(function(element) {
+        db.usersources.insert({name: element.name}, function(error, res) {
+            if (error) {
+                handleError(`[${element.name}] ${error}`);
+                return;
+            }
+        });
     });
 }
 
@@ -48,24 +54,24 @@ function handleUser(user) {
 /**
  * Update modules' settings.
  *
- * @return {Promise} result of update
+ * @return {Promise} update promise
  */
 function update() {
     return new Promise((resolve, reject) => {
-        db.usersources.findOne({name: VK.NAME}, function(err, res) {
-            if (err) {
-                reject(err);
-            }
+        modules.forEach(function(element) {
+            db.usersources.findOne({name: element.name}, function(error, res) {
+                if (error) {
+                    reject(`[${element.name}] ${error}`);
+                }
 
-            if (res) {
-                let options = {
-                    appId: res.app_id,
-                    appSecureKey: res.app_secure_key,
-                    userToken: res.user_token,
-                };
-                vkModule.setOptions(options);
-            }
-            resolve();
+                if (!res) {
+                    reject(`[${element.name}] Module ${element.name} couldn't be found`);
+                }
+
+                delete res._id;
+                element.update(res);
+                resolve();
+            });
         });
     });
 }
@@ -77,21 +83,45 @@ function update() {
  * the error during the execution
  */
 function handleError(error) {
-    console.log('[' + new Date() + '] '+ error);
+    console.log(`[${new Date()} ${error}`);
+}
+
+/**
+ * Retry execution of a function that returns promise.
+ *
+ * @param {function} fn function that returns promise
+ * @param {number} maxRetries maximal number of retries
+ * @return {Promise} promise from passed function
+ */
+function retry(fn, maxRetries = 3) {
+    return fn().catch((error) => {
+        if (maxRetries <= 0) {
+            throw error;
+        }
+
+        return retry(fn, maxRetries - 1);
+    });
+}
+
+/**
+ * Update modules' settings.
+ *
+ * @return {Promise} update promise
+ */
+function fetch() {
+    return new Promise((resolve, reject) => {
+        modules.forEach(function(element) {
+            retry(element.fetchUsers.bind(element)).then((res) => {
+                res.forEach(function(user) {
+                    handleUser(user);
+                });
+                resolve();
+            }).catch((error) => reject(`[${element.name}] ${error}`));
+        });
+    });
 }
 
 init();
 setInterval(function() {
-    update().then((res) => {
-        vkModule.fetchUsers(function(error, result) {
-            if (error) {
-                handleError(error);
-                return;
-            }
-
-            result.forEach(function(element) {
-                handleUser(element);
-            });
-        });
-    }).catch((error) => handleError(error));
+    update().then(fetch).catch((error) => handleError(error));
 }, 3*60*1000);
