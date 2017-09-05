@@ -62,41 +62,33 @@ class VK {
     }
 
     /**
-     * Callback format for results
-     * @callback VK~resultCallback
-     * @param {object} error error instance representing
-     * the error during the execution
-     * @param {object} result result object if the command
-     * was executed successfully
-     */
-
-    /**
      * Fetch users from VK.
      *
-     * @param {VK~resultCallback} callback result callback
+     * @return {Promise<Array>} promise that contains fetched users
+     * when fulfilled.
      */
-    fetchUsers(callback) {
-        this._vkApi.call(
-            'friends.get',
-             {
-               fields: 'last_seen',
-           }).then((res) => {
-                let users = [];
-                res.items.forEach(function(element) {
-                    users.push(
-                        {id: element.id,
-                        first_name: element.first_name,
-                        last_name: element.last_name,
-                        online: element.online == 1 ? true : false,
-                        last_seen:
-                         element.last_seen ? element.last_seen.time : undefined,
-                        source: VK.NAME});
-                });
-                callback(null, users);
-            })
-            .catch(function(err) {
-                callback(err);
-            });
+    fetchUsers() {
+        return new Promise((resolve, reject) => {
+            this._vkApi.call(
+                'friends.get',
+                 {
+                   fields: 'last_seen',
+               }).then((res) => {
+                    let users = [];
+                    res.items.forEach((element) => {
+                        users.push(
+                            {id: element.id,
+                            first_name: element.first_name,
+                            last_name: element.last_name,
+                            online: element.online == 1 ? true : false,
+                            last_seen:
+                             element.last_seen ? element.last_seen.time : undefined,
+                            source: this.name});
+                    });
+                    resolve(users);
+                })
+                .catch((error) => reject(error));
+        });
     }
 }
 
