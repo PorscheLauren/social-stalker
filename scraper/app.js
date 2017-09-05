@@ -67,6 +67,7 @@ function update() {
             db.usersources.findOne({name: element.name}, function(error, res) {
                 if (error) {
                     reject(`[${element.name}] ${error}`);
+                    return;
                 }
 
                 if (!res) {
@@ -74,6 +75,7 @@ function update() {
                         `[${element.name}] Module ${element.name} `
                             + `couldn't be found`
                     );
+                    return;
                 }
 
                 delete res._id;
