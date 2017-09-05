@@ -38,16 +38,16 @@ exports.getSourceInfo = function(req, res, next) {
 exports.updateSourceToken = function(req, res, next) {
     let setQuery = {};
 
-    if (req.body.app_id) {
-        setQuery.app_id = req.body.app_id;
+    if (req.body.appId) {
+        setQuery.appId = req.body.appId;
     }
 
-    if (req.body.app_secure_key) {
-        setQuery.app_secure_key = req.body.app_secure_key;
+    if (req.body.appSecureKey) {
+        setQuery.appSecureKey = req.body.appSecureKey;
     }
 
-    if (req.body.user_token) {
-        setQuery.user_token = req.body.user_token;
+    if (req.body.userToken) {
+        setQuery.userToken = req.body.userToken;
     }
 
     db.usersources.update({
