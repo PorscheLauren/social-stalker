@@ -42,8 +42,20 @@ exports.updateSourceToken = function(req, res, next) {
         setQuery.appId = req.body.appId;
     }
 
+    if (req.body.clientId) {
+        setQuery.clientId = req.body.clientId;
+    }
+
+    if (req.body.cookie) {
+        setQuery.cookie = req.body.cookie;
+    }
+
     if (req.body.appSecureKey) {
         setQuery.appSecureKey = req.body.appSecureKey;
+    }
+
+    if (req.body.userId) {
+        setQuery.userId = req.body.userId;
     }
 
     if (req.body.userToken) {
