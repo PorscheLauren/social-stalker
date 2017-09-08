@@ -189,7 +189,7 @@ class Facebook {
                             map.forEach((value, key) => {
                                 users.push(
                                     new Promise((resolve, reject) => {
-                                        this.getPersonName(key)
+                                        this.getUserName(key)
                                             .then((person) => {
                                                 let online =
                                                     Math.abs(value.lat - time) <
