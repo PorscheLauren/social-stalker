@@ -24,7 +24,7 @@ class Telegram {
             server,
             api,
             app: {
-                storage: new TelegramStorage(),
+                storage: new TelegramStorage(this.name),
             },
         });
     }
