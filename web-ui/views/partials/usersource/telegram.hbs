@@ -1,0 +1,116 @@
+<div class="alert alert-settings-ok alert-success alert-dismissible fade show hidden"
+    role="alert">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <strong>Success!</strong> Settings have been saved.
+</div>
+<div class="alert alert-code-ok alert-success alert-dismissible fade show hidden"
+    role="alert">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button> Code has been sent.
+</div>
+<div class="alert alert-settings-error alert-danger alert-dismissible fade show hidden"
+    role="alert">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <strong>Error!</strong> Could <strong>not</strong> save settings.
+</div>
+<div class="alert alert-code-error alert-danger alert-dismissible fade show hidden"
+    role="alert">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <strong>Error!</strong> Could <strong>not</strong> send code.
+</div>
+<form class="update {{source}} p-2">
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="api-id">Application's id:</label>
+        <div class="col-sm-10">
+            <input name="apiId" type="text" class="form-control" id="api-id" value="{{source.apiId}}"
+                placeholder="Enter application id" aria-describedby="api-id-help">
+            <small id="api-id-help" class="form-text text-muted">
+                Can be aquired on your app configuration <a class="text-info" href="https://my.telegram.org/apps">page</a>.
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="api-hash">Application's secret hash:</label>
+        <div class="col-sm-10">
+            <input name="apiHash" type="text" class="form-control" id="api-hash" value="{{source.apiHash}}"
+                placeholder="Enter application secret hash" aria-describedby="api-hash-help">
+            <small id="api-hash-help" class="form-text text-muted">
+                Can be aquired on your app configuration 
+                <a class="text-info" href="https://my.telegram.org/apps">page</a>.
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="phone-number">Phone number:</label>
+        <div class="col-sm-5">
+            <input name="phoneNumber" type="tel" class="form-control" id="phone-number" value="{{source.phoneNumber}}"
+                placeholder="Enter your phone number" aria-describedby="phone-number-help">
+            <small id="phone-number-help" class="form-text text-muted">
+                Enter your full phone number in international format.
+            </small>
+        </div>
+        <div class="col-sm-5">
+            <button id="send-code" class="btn btn-dark">Send code</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="code">Code:</label>
+        <div class="col-sm-5">
+            <input name="code" type="text" class="form-control" id="code" placeholder="Enter confirmation code"
+                aria-describedby="code-help">
+            <small id="code-help" class="form-text text-muted">
+                Confirmation code you've received in SMS-message.
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-5">
+            <button id="update" class="btn btn-dark">Update</button>
+        </div>
+    </div>
+</form>
+
+<script>
+$(function() {
+    $('button#send-code').on('click', function(event) {
+        event.preventDefault();
+        $.post('/settings/source/telegram/send', {
+            apiId: $('#api-id').val(),
+            apiHash: $('#api-hash').val(),
+            phoneNumber: $('#phone-number').val(),
+        })
+            .done(function() {
+                $('.alert-code-ok').show();
+            })
+            .fail(function() {
+                $('.alert-code-error').show();
+            });
+    });
+
+    $('button#update').on('click', function(event) {
+        event.preventDefault();
+        $.post('/settings/source/telegram/save', {
+            phoneCode: $('#code').val(),
+        })
+            .done(function(data) {
+                $('.alert-settings-ok').show();
+            })
+            .fail(function(data) {
+                $('.alert-settings-error').show();
+            });
+    });
+
+    $('button.close').on('click', function(event) {
+        $(this)
+            .parent('.alert')
+            .hide();
+    });
+});
+</script>
