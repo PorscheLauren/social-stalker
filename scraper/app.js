@@ -8,6 +8,7 @@ let db = mongojs('mongodb://localhost:27017/social-stalker', [
 const path = require('path');
 const VK = require(path.resolve(__dirname, 'modules/vk.js'));
 const Facebook = require(path.resolve(__dirname, 'modules/facebook.js'));
+const Telegram = require(path.resolve(__dirname, 'modules/telegram.js'));
 let modules = [];
 
 /**
@@ -18,6 +19,7 @@ function init() {
 
     modules.push(new VK());
     modules.push(new Facebook('', '', ''));
+    modules.push(new Telegram());
 
     modules.forEach(function(element) {
         db.usersources.insert({name: element.name}, function(error, res) {

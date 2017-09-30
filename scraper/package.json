@@ -12,6 +12,7 @@
     "mongojs": "^2.4.1",
     "node-vkapi": "^2.1.0",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "telegram-mtproto": "^2.2.2"
   }
 }
