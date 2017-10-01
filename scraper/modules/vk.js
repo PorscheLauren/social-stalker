@@ -29,7 +29,7 @@ class VK {
     /**
      * Return name of the scraper.
      */
-    get name() {
+    static get NAME() {
         return 'vk';
     }
 
@@ -84,7 +84,7 @@ class VK {
                             last_seen: element.last_seen
                                 ? element.last_seen.time
                                 : undefined,
-                            source: this.name,
+                            source: VK.NAME,
                         });
                     });
                     resolve(users);

@@ -32,7 +32,7 @@ class Telegram {
     /**
      * Return name of the scraper.
      */
-    get name() {
+    static get NAME() {
         return 'telegram';
     }
 
@@ -62,7 +62,7 @@ class Telegram {
                             last_name: element.last_name,
                             online: element.status._ === 'userStatusOnline',
                             last_seen: element.status.was_online,
-                            source: this.name,
+                            source: Telegram.NAME,
                         });
                     });
                     resolve(users);

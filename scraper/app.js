@@ -22,9 +22,10 @@ function init() {
     modules.push(new Telegram());
 
     modules.forEach(function(element) {
-        db.usersources.insert({name: element.name}, function(error, res) {
+        let elementName = element.constructor.NAME;
+        db.usersources.insert({name: elementName}, function(error, res) {
             if (error) {
-                handleError(`[${element.name}] ${error}`);
+                handleError(`[${elementName}] ${error}`);
                 return;
             }
         });
@@ -66,15 +67,16 @@ function handleUser(user) {
 function update() {
     return new Promise((resolve, reject) => {
         modules.forEach(function(element) {
-            db.usersources.findOne({name: element.name}, function(error, res) {
+            let elementName = element.constructor.NAME;
+            db.usersources.findOne({name: elementName}, function(error, res) {
                 if (error) {
-                    reject(`[${element.name}] ${error}`);
+                    reject(`[${elementName}] ${error}`);
                     return;
                 }
 
                 if (!res) {
                     reject(
-                        `[${element.name}] Module ${element.name} `
+                        `[${elementName}] Module ${elementName} `
                             + `couldn't be found`
                     );
                     return;
@@ -130,7 +132,7 @@ function fetch() {
                     });
                     resolve();
                 })
-                .catch((error) => reject(`[${element.name}] ${error}`));
+                .catch((error) => reject(`[${element.constructor.NAME}] ${error}`));
         });
     });
 }
