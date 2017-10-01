@@ -9,6 +9,8 @@ const path = require('path');
 const VK = require(path.resolve(__dirname, 'modules/vk.js'));
 const Facebook = require(path.resolve(__dirname, 'modules/facebook.js'));
 const Telegram = require(path.resolve(__dirname, 'modules/telegram.js'));
+const TelegramStorage = require('./storages/telegram-mongo.js');
+
 let modules = [];
 
 /**
@@ -19,7 +21,7 @@ function init() {
 
     modules.push(new VK());
     modules.push(new Facebook('', '', ''));
-    modules.push(new Telegram());
+    modules.push(new Telegram(new TelegramStorage(Telegram.NAME)));
 
     modules.forEach(function(element) {
         let elementName = element.constructor.NAME;
@@ -132,7 +134,9 @@ function fetch() {
                     });
                     resolve();
                 })
-                .catch((error) => reject(`[${element.constructor.NAME}] ${error}`));
+                .catch((error) =>
+                    reject(`[${element.constructor.NAME}] ${error}`)
+                );
         });
     });
 }

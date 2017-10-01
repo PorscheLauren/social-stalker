@@ -1,7 +1,6 @@
 'use strict';
 
 const MTProto = require('telegram-mtproto').MTProto;
-const TelegramStorage = require('../storages/telegram-mongo.js');
 
 /**
  * Class representing scraper from Telegram.
@@ -9,8 +8,11 @@ const TelegramStorage = require('../storages/telegram-mongo.js');
 class Telegram {
     /**
      * Create Telegram scraper.
+     *
+     * @param {telegram-mtproto.AsyncStorage} storage storage instance
+     * for saving session data
      */
-    constructor() {
+    constructor(storage) {
         const api = {
             layer: 57,
             initConnection: 0x69796de9,
@@ -24,7 +26,7 @@ class Telegram {
             server,
             api,
             app: {
-                storage: new TelegramStorage(this.name),
+                storage: storage,
             },
         });
     }
