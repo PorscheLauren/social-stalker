@@ -5,10 +5,10 @@ let db = mongojs('mongodb://localhost:27017/social-stalker', [
     'users',
     'usersources',
 ]);
-const path = require('path');
-const VK = require(path.resolve(__dirname, 'modules/vk.js'));
-const Facebook = require(path.resolve(__dirname, 'modules/facebook.js'));
-const Telegram = require(path.resolve(__dirname, 'modules/telegram.js'));
+
+const VK = require('./modules/vk.js');
+const Facebook = require('./modules/facebook.js');
+const Telegram = require('./modules/telegram.js');
 const TelegramStorage = require('./storages/telegram-mongo.js');
 
 let modules = [];
