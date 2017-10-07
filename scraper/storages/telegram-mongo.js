@@ -12,14 +12,12 @@ class TelegramMongoStorage {
      * @param {string} scraperName name of the scraper in database
      * @param {string} dbAddress address and port of the database
      * @param {string} dbName name of the database
+     * @param {string} collectionName name of the collection
      */
-    constructor(
-        scraperName,
-        dbAddress = 'localhost:27017',
-        dbName = 'social-stalker'
-    ) {
+    constructor(scraperName, dbAddress, dbName, collectionName) {
         this._name = scraperName;
-        this._db = mongojs(`mongodb://${dbAddress}/${dbName}`, ['usersources']);
+        this._collection = collectionName;
+        this._db = mongojs(`mongodb://${dbAddress}/${dbName}`, [collectionName]);
     }
 
     /**
@@ -31,7 +29,7 @@ class TelegramMongoStorage {
      */
     get(key) {
         return new Promise((resolve, reject) => {
-            this._db.usersources.findOne({name: this._name}, function(
+            this._db[this._collection].findOne({name: this._name}, function(
                 error,
                 res
             ) {
@@ -57,7 +55,7 @@ class TelegramMongoStorage {
      */
     set(key, value) {
         return new Promise((resolve, reject) => {
-            this._db.usersources.update(
+            this._db[this._collection].update(
                 {
                     name: this._name,
                 },
@@ -88,7 +86,7 @@ class TelegramMongoStorage {
             keys.forEach(function(key) {
                 fields[key] = '';
             });
-            this._db.usersources.update(
+            this._db[this._collection].update(
                 {
                     name: this._name,
                 },
@@ -114,7 +112,8 @@ class TelegramMongoStorage {
      */
     clear() {
         return new Promise((resolve, reject) => {
-            this._db.usersources.remove({name: this._name}, function(err, r) {
+            let query = {name: this._name};
+            this._db[this._collection].remove(query, function(err, r) {
                 if (err) {
                     return reject(err);
                 }
