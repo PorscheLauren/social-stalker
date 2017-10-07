@@ -6,26 +6,31 @@ const Telegram = require('./modules/telegram.js');
 const TelegramStorage = require('./storages/telegram-mongo.js');
 const MongoStorage = require('./storages/basic-mongo');
 
-const database = new MongoStorage('localhost:27017', 'social-stalker');
+const DATABASE_ADDRESS = 'localhost:27017';
+const DATABASE_NAME = 'social-stalker';
+const COLLECTION_USERS = 'user';
+const COLLECTION_USERSOURCES = 'usersources';
+
+const database = new MongoStorage(DATABASE_ADDRESS, DATABASE_NAME);
 let modules = [];
 
 /**
  * Initialize modules and database.
  */
 function init() {
-    database.createIndex('usersources', {name: 1}, {unique: true});
+    database.createIndex(COLLECTION_USERSOURCES, {name: 1}, {unique: true});
 
     modules.push(new VK());
     modules.push(new Facebook('', '', ''));
     let storage = new TelegramStorage(Telegram.NAME,
-        'localhost:27017',
-        'social-stalker',
-        'usersources');
+        DATABASE_ADDRESS,
+        DATABASE_NAME,
+        COLLECTION_USERSOURCES);
     modules.push(new Telegram(storage));
 
     modules.forEach(function(element) {
         let elementName = element.constructor.NAME;
-        database.create('usersources', {name: elementName})
+        database.create(COLLECTION_USERSOURCES, {name: elementName})
             .catch((error) => handleError(error));
     });
 }
@@ -48,7 +53,7 @@ function handleUser(user) {
     };
     let options = {upsert: true};
 
-    database.update('user', query, update, options)
+    database.update(COLLECTION_USERS, query, update, options)
         .catch((error) => handleError(error));
 }
 
@@ -63,7 +68,7 @@ function update() {
             let elementName = element.constructor.NAME;
             let query = {name: elementName};
             let options = {single: true};
-            database.find('usersources', query, options)
+            database.find(COLLECTION_USERSOURCES, query, options)
                 .then((usersource) => {
                     delete usersource._id;
                     element.update(usersource);
