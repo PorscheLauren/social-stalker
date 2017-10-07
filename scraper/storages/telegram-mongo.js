@@ -113,7 +113,7 @@ class TelegramMongoStorage {
     clear() {
         return new Promise((resolve, reject) => {
             let query = {name: this._name};
-            this._db[this._collection].remove(query, function(err, r) {
+            this._db[this._collection].deleteOne(query, function(err, r) {
                 if (err) {
                     return reject(err);
                 }
