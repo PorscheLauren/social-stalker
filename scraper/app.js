@@ -1,36 +1,32 @@
 'use strict';
 
-const mongojs = require('mongojs');
-let db = mongojs('mongodb://localhost:27017/social-stalker', [
-    'users',
-    'usersources',
-]);
-
 const VK = require('./modules/vk.js');
 const Facebook = require('./modules/facebook.js');
 const Telegram = require('./modules/telegram.js');
 const TelegramStorage = require('./storages/telegram-mongo.js');
+const MongoStorage = require('./storages/basic-mongo');
 
+const database = new MongoStorage('localhost:27017', 'social-stalker');
 let modules = [];
 
 /**
  * Initialize modules and database.
  */
 function init() {
-    db.usersources.createIndex({name: 1}, {unique: true});
+    database.createIndex('usersources', {name: 1}, {unique: true});
 
     modules.push(new VK());
     modules.push(new Facebook('', '', ''));
-    modules.push(new Telegram(new TelegramStorage(Telegram.NAME)));
+    let storage = new TelegramStorage(Telegram.NAME,
+        'localhost:27017',
+        'social-stalker',
+        'usersources');
+    modules.push(new Telegram(storage));
 
     modules.forEach(function(element) {
         let elementName = element.constructor.NAME;
-        db.usersources.insert({name: elementName}, function(error, res) {
-            if (error) {
-                handleError(`[${elementName}] ${error}`);
-                return;
-            }
-        });
+        database.create('usersources', {name: elementName})
+            .catch((error) => handleError(error));
     });
 }
 
@@ -40,25 +36,20 @@ function init() {
  * @param {object} user user object
  */
 function handleUser(user) {
-    db.users.update(
-        {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            internal_id: user.id,
-            source: user.source,
-        },
-        {
-            $push: {last_seen: user.last_seen},
-            $set: {online: user.online},
-        },
-        {upsert: true},
-        function(err, r) {
-            if (err) {
-                handleError(err);
-                return;
-            }
-        }
-    );
+    let query = {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        internal_id: user.id,
+        source: user.source,
+    };
+    let update = {
+        $push: {last_seen: user.last_seen},
+        $set: {online: user.online},
+    };
+    let options = {upsert: true};
+
+    database.update('user', query, update, options)
+        .catch((error) => handleError(error));
 }
 
 /**
@@ -70,24 +61,15 @@ function update() {
     return new Promise((resolve, reject) => {
         modules.forEach(function(element) {
             let elementName = element.constructor.NAME;
-            db.usersources.findOne({name: elementName}, function(error, res) {
-                if (error) {
-                    reject(`[${elementName}] ${error}`);
-                    return;
-                }
-
-                if (!res) {
-                    reject(
-                        `[${elementName}] Module ${elementName} `
-                            + `couldn't be found`
-                    );
-                    return;
-                }
-
-                delete res._id;
-                element.update(res);
-                resolve();
-            });
+            let query = {name: elementName};
+            let options = {single: true};
+            database.find('usersources', query, options)
+                .then((usersource) => {
+                    delete usersource._id;
+                    element.update(usersource);
+                    resolve();
+                })
+                .catch((error) => reject(`[${elementName}] ${error}`));
         });
     });
 }
