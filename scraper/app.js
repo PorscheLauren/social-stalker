@@ -8,7 +8,7 @@ const MongoStorage = require('social-stalker-storage').MongoStorage;
 
 const DATABASE_ADDRESS = 'localhost:27017';
 const DATABASE_NAME = 'social-stalker';
-const COLLECTION_USERS = 'user';
+const COLLECTION_USERS = 'users';
 const COLLECTION_USERSOURCES = 'usersources';
 
 const database = new MongoStorage(DATABASE_ADDRESS, DATABASE_NAME);
