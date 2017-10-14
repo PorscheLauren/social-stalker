@@ -1,8 +1,14 @@
 'use strict';
 
-const mongojs = require('mongojs');
-let db = mongojs('mongodb://localhost:27017/social-stalker', ['users']);
-db.users.createIndex({
+const MongoStorage = require('../storages/basic-mongo');
+
+const DATABASE_ADDRESS = 'localhost:27017';
+const DATABASE_NAME = 'social-stalker';
+const COLLECTION_USERS = 'users';
+
+const database = new MongoStorage(DATABASE_ADDRESS, DATABASE_NAME);
+
+database.createIndex(COLLECTION_USERS, {
     first_name: 'text',
     last_name: 'text',
 });
@@ -15,49 +21,49 @@ exports.listUsers = function(req, res, next) {
         query.$or = [{'first_name': nameRegex}, {'last_name': nameRegex}];
     }
 
-    db.users.find(query).sort({
+    let sorting = {
         first_name: 1,
         last_name: 1,
-    }, function(err, users) {
-        if (err) {
-            next(err);
-        }
+    };
 
-        let vkUsers = [];
-        let fbUsers = [];
-        let tgUsers = [];
+    database.find(COLLECTION_USERS, query, {sort: sorting})
+        .then((users) => {
+            let vkUsers = [];
+            let fbUsers = [];
+            let tgUsers = [];
 
-        users.forEach(function(element) {
-            switch (element.source) {
-                case 'vk':
-                    vkUsers.push(element);
-                    break;
-                case 'facebook':
-                    fbUsers.push(element);
-                    break;
-                case 'telegram':
-                    tgUsers.push(element);
-                    break;
-            }
-        });
-        res.render('index', {
-            vkUsers: vkUsers,
-            fbUsers: fbUsers,
-            tgUsers: tgUsers,
-        });
-    });
+            users.forEach(function(element) {
+                switch (element.source) {
+                    case 'vk':
+                        vkUsers.push(element);
+                        break;
+                    case 'facebook':
+                        fbUsers.push(element);
+                        break;
+                    case 'telegram':
+                        tgUsers.push(element);
+                        break;
+                }
+            });
+
+            res.render('index', {
+                vkUsers: vkUsers,
+                fbUsers: fbUsers,
+                tgUsers: tgUsers,
+            });
+        })
+        .catch((err) => next(err));
 };
 
 exports.getUserInfo = function(req, res, next) {
-    db.users.findOne({
-        '_id': new mongojs.ObjectId(req.params.id),
-    }, function(err, user) {
-        if (err) {
-            next(err);
-        }
+    let query = {'_id': new MongoStorage.ObjectID(req.params.id)};
+    let options = {single: true};
 
-        res.render('partials/user-info', {
-            user: user,
-        });
-    });
+    database.find(COLLECTION_USERS, query, options)
+        .then((user) => {
+            res.render('partials/user-info', {
+                user: user,
+            });
+        })
+        .catch((err) => next(err));
 };

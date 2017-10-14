@@ -1,38 +1,37 @@
 'use strict';
 
-const mongojs = require('mongojs');
-let db = mongojs('mongodb://localhost:27017/social-stalker', ['usersources']);
+const MongoStorage = require('../storages/basic-mongo');
+
+const DATABASE_ADDRESS = 'localhost:27017';
+const DATABASE_NAME = 'social-stalker';
+const COLLECTION_USERSOURCES = 'usersources';
+
+const database = new MongoStorage(DATABASE_ADDRESS, DATABASE_NAME);
 
 exports.listSources = function(req, res, next) {
-    db.usersources.find(function(err, sources) {
-        if (err) {
-            return next(err);
-        }
+    database.find(COLLECTION_USERSOURCES)
+        .then((sources) => {
+            let map = new Map();
+            sources.forEach(function(element) {
+                map.set(element.name, element);
+            });
 
-        let map = new Map();
-        sources.forEach(function(element) {
-            map.set(element.name, element);
-        });
-
-        res.render('settings', {
-            sources: map,
-        });
-    });
+            res.render('settings', {
+                sources: map,
+            });
+        })
+        .catch((err) => next(err));
 };
 
 exports.getSourceInfo = function(req, res, next) {
     let name = req.params.name;
-    db.usersources.findOne({
-        name: name,
-    }, function(err, source) {
-        if (err) {
-            next(err);
-        }
-
-        res.render('partials/usersource/' + name, {
-            source: source,
-        });
-    });
+    database.find(COLLECTION_USERSOURCES, {name: name}, {single: true})
+        .then((source) => {
+            res.render('partials/usersource/' + name, {
+                source: source,
+            });
+        })
+        .catch((err) => next(err));
 };
 
 exports.updateSourceToken = function(req, res, next) {
@@ -62,15 +61,10 @@ exports.updateSourceToken = function(req, res, next) {
         setQuery.userToken = req.body.userToken;
     }
 
-    db.usersources.update({
-        name: req.params.name,
-    }, {
-        $set: setQuery,
-    }, function(err, value) {
-        if (err) {
-            return next(err);
-        }
+    let query = {name: req.params.name};
+    let update = {$set: setQuery};
 
-        res.sendStatus(200);
-    });
+    database.update(COLLECTION_USERSOURCES, query, update)
+        .then(() => res.sendStatus(200))
+        .catch((err) => next(err));
 };
