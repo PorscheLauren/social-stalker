@@ -67,6 +67,8 @@
 
 .timeline-controls a {
     color: rgba(0, 0, 0, 0.5);
+    display: inline-block;
+    height: 100%;
 }
 
 .timeline-controls a:hover {
