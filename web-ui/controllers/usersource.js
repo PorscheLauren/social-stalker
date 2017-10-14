@@ -1,6 +1,6 @@
 'use strict';
 
-const MongoStorage = require('../storages/basic-mongo');
+const MongoStorage = require('social-stalker-storage').MongoStorage;
 
 const DATABASE_ADDRESS = 'localhost:27017';
 const DATABASE_NAME = 'social-stalker';

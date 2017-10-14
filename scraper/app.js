@@ -3,8 +3,8 @@
 const VK = require('./modules/vk.js');
 const Facebook = require('./modules/facebook.js');
 const Telegram = require('./modules/telegram.js');
-const TelegramStorage = require('./storages/telegram-mongo.js');
-const MongoStorage = require('./storages/basic-mongo');
+const TelegramStorage = require('social-stalker-storage').TelegramStorage;
+const MongoStorage = require('social-stalker-storage').MongoStorage;
 
 const DATABASE_ADDRESS = 'localhost:27017';
 const DATABASE_NAME = 'social-stalker';

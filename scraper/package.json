@@ -13,6 +13,7 @@
     "node-vkapi": "^2.1.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
+    "social-stalker-storage": "file:../storage",
     "telegram-mtproto": "^2.2.2"
   }
 }

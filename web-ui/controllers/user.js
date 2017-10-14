@@ -1,6 +1,7 @@
 'use strict';
 
-const MongoStorage = require('../storages/basic-mongo');
+const MongoStorage = require('social-stalker-storage').MongoStorage;
+const ObjectID = require('social-stalker-storage').MongoStorage.ObjectID;
 
 const DATABASE_ADDRESS = 'localhost:27017';
 const DATABASE_NAME = 'social-stalker';
@@ -56,7 +57,7 @@ exports.listUsers = function(req, res, next) {
 };
 
 exports.getUserInfo = function(req, res, next) {
-    let query = {'_id': new MongoStorage.ObjectID(req.params.id)};
+    let query = {'_id': new ObjectID(req.params.id)};
     let options = {single: true};
 
     database.find(COLLECTION_USERS, query, options)

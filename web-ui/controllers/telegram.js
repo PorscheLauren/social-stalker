@@ -1,6 +1,6 @@
 'use strict';
 
-const TelegramStorage = require('../storages/telegram-mongo.js');
+const TelegramStorage = require('social-stalker-storage').TelegramStorage;
 const MTProto = require('telegram-mtproto').MTProto;
 
 const SOURCE_NAME = 'telegram';
