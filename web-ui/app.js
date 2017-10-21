@@ -7,7 +7,6 @@ const hbs = require('hbs');
 
 const index = require('./routes/index');
 const settings = require('./routes/settings');
-const help = require('./routes/help');
 
 const app = express();
 
@@ -52,7 +51,6 @@ app.use('/fonts', express.static(
 app.use('/', index);
 app.use('/index', index);
 app.use('/settings', settings);
-app.use('/help', help);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
