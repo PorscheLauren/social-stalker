@@ -13,15 +13,14 @@ class Facebook {
      * @param {string} cookie cookie string
      * @param {string} clientId client id
      */
-    constructor(userId, cookie, clientId) {
-        this._userId = userId;
-        this._cookie = cookie;
-        this._clientId = clientId;
+    constructor() {
+        this._userId = null;
+        this._cookie = null;
+        this._clientId = null;
         this._params = {
             cap: 8,
             cb: '67us',
-            channel: 'p_' + userId,
-            clientid: clientId,
+            clientid: null,
             format: 'json',
             idle: 0,
             isq: 3,
@@ -33,10 +32,8 @@ class Facebook {
             state: 'active',
             sticky_pool: 'ash2c07_chat-proxy',
             sticky_token: 0,
-            uuid: userId,
-            viewer_uuid: userId,
         };
-        this._cookie = cookie;
+        this._cookie = null;
     }
 
     /**
@@ -71,6 +68,9 @@ class Facebook {
     set userId(id) {
         this._userId = id;
         this._params.userId = id;
+        this._params.channel = 'p_' + id;
+        this._params.uuid = id;
+        this._params.viewer_uuid = id;
     }
 
     /**

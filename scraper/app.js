@@ -21,7 +21,7 @@ function init() {
     database.createIndex(COLLECTION_USERSOURCES, {name: 1}, {unique: true});
 
     modules.push(new VK());
-    modules.push(new Facebook('', '', ''));
+    modules.push(new Facebook());
     let storage = new TelegramStorage(Telegram.NAME,
         DATABASE_ADDRESS,
         DATABASE_NAME,
