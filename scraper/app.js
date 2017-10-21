@@ -10,6 +10,7 @@ const DATABASE_ADDRESS = 'localhost:27017';
 const DATABASE_NAME = 'social-stalker';
 const COLLECTION_USERS = 'users';
 const COLLECTION_USERSOURCES = 'usersources';
+const POLL_INTERVAL_MILLISECONDS = 3 * 60 * 1000;
 
 const database = new MongoStorage(DATABASE_ADDRESS, DATABASE_NAME);
 let modules = [];
@@ -129,8 +130,6 @@ function fetch() {
 }
 
 init();
-setInterval(function() {
-    update()
-        .then(fetch)
-        .catch((error) => handleError(error));
-}, 0.1 * 60 * 1000);
+setInterval(() => {
+    update().then(fetch).catch((error) => handleError(error));
+}, POLL_INTERVAL_MILLISECONDS);
