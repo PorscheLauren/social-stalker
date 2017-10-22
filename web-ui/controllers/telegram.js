@@ -38,12 +38,17 @@ exports.sendCode = function(req, res, next) {
         api_id: apiId,
         api_hash: apiHash,
     })
-        .then((result) =>
-            Promise.all(telegramStorage.set('apiId', apiId),
-                        telegramStorage.set('apiHash', apiHash),
-                        telegramStorage.set('phoneNumber', number),
-                        telegramStorage.set('phoneCodeHash',
-                                            result.phone_code_hash)))
+        .then((result) => {
+            let promises = [
+                telegramStorage.set('apiId', apiId),
+                telegramStorage.set('apiHash', apiHash),
+                telegramStorage.set('phoneNumber', number),
+                telegramStorage.set('phoneCodeHash',
+                                result.phone_code_hash),
+            ];
+
+            return Promise.all(promises);
+        })
         .then(() => res.sendStatus(200))
         .catch((err) => next(err));
 };
@@ -51,12 +56,15 @@ exports.sendCode = function(req, res, next) {
 exports.saveCode = function(req, res, next) {
     let code = req.body.phoneCode;
 
-    Promise.all(telegramStorage.get('phoneNumber'),
-                telegramStorage.get('phoneCodeHash'))
-        .then((number, hash) =>
+    let promises = [
+        telegramStorage.get('phoneNumber'),
+        telegramStorage.get('phoneCodeHash'),
+    ];
+    Promise.all(promises)
+        .then((result) =>
             client('auth.signIn', {
-                phone_number: number,
-                phone_code_hash: hash,
+                phone_number: result[0],
+                phone_code_hash: result[1],
                 phone_code: code,
             }))
         .then((result) =>
