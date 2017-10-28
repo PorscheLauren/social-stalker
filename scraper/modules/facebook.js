@@ -1,6 +1,7 @@
 'use strict';
 
 const request = require('request-promise');
+const cheerio = require('cheerio');
 
 /**
  * Class representing scraper from social network Facebook.
@@ -120,7 +121,7 @@ class Facebook {
      * properties 'firstName' and 'lastName' when fulfilled.
      */
     getUserName(id) {
-        const regex = /"profile_name_in_profile_page">(\S+)\s(\S+)<\/span/g;
+        const commentRegex = /(<!--)|(-->)/g;
         return new Promise((resolve, reject) => {
             request
                 .get('https://facebook.com/' + id, {
@@ -132,11 +133,15 @@ class Facebook {
                     },
                 })
                 .then((res) => {
-                    let match = regex.exec(res);
-                    if (match !== null) {
-                        let user = {};
-                        user.firstName = match[1];
-                        user.lastName = match[2];
+                    let withoutComments = res.replace(commentRegex, '');
+                    let doc = cheerio.load(withoutComments);
+                    let name = doc('#fb-timeline-cover-name').text();
+                    if (name) {
+                        let splitted = name.split(/\s+/g);
+                        let user = {
+                            firstName: splitted[0],
+                            lastName: splitted[1],
+                        };
                         resolve(user);
                     } else {
                         reject('Could not find user\'s name');

@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "mongojs": "^2.4.1",
     "node-vkapi": "^2.1.0",
     "request": "^2.81.0",
