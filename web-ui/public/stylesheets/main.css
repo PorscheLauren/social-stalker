@@ -3,6 +3,8 @@
     padding-right: 0;
     background-color: #4C5457;
     color: #868e96;
+    height: 90vh;
+    overflow: auto;
 }
 
 .placeholder {
