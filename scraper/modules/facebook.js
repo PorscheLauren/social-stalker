@@ -226,6 +226,11 @@ class Facebook {
                                 )
                             );
                         }
+                    } else {
+                        reject(new Error(
+                            'Response didn\'t contain user information'
+                        )
+                    );
                     }
                 })
                 .catch((err) => reject(err));
