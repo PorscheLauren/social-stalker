@@ -1,12 +1,9 @@
 {
   "name": "social-stalker-scraper",
   "version": "1.0.0",
-  "description": "",
+  "description": "Scraper that collects info about users from social networks",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "author": "Serhii Shymkov",
   "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",

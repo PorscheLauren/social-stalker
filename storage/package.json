@@ -1,12 +1,9 @@
 {
   "name": "social-stalker-storage",
   "version": "1.0.0",
-  "description": "",
+  "description": "Storage lib",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "author": "Serhii Shymkov",
   "license": "MIT",
   "dependencies": {
     "mongojs": "^2.4.1"
